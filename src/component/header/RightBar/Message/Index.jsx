@@ -2,6 +2,7 @@ import { Popover, Transition } from '@headlessui/react'
 import React, { Fragment } from 'react'
 import { BsMessenger, BsSearch, BsThreeDots } from 'react-icons/bs'
 import ListMessageChat from './ListMessageChat/Index'
+import { Link } from 'react-router-dom'
 
 const Index = () => {
   return (
@@ -15,7 +16,7 @@ const Index = () => {
           <div className="flex justify-center h-max items-center">
             <div className="p-[10px] cursor-pointer flex items-center justify-center rounded-full hover:bg-gray-300 bg-gray-200 dark:bg-dark-search dark:hover:bg-dark-icon">
               <BsMessenger
-                className="dark:text-white"
+                className="dark:text-dark-item-hover"
                 size={20}
               />
             </div>
@@ -32,7 +33,7 @@ const Index = () => {
         >
           <Popover.Panel
             className={
-              'absolute overflow-y-scroll max-h-[90vh] h-max top-16 -right-10 bg-white  dark:text-white dark:bg-dark-nav shadow-md rounded-md w-80'
+              'absolute overflow-y-scroll hidden-scrollbar max-h-[90vh] h-max top-16 -right-[88px] bg-white  dark:text-dark-item-hover dark:bg-dark-nav shadow-md rounded-md w-[350px]'
             }
           >
             <div className="flex items-center justify-between py-2 px-4">
@@ -41,19 +42,21 @@ const Index = () => {
                 <BsThreeDots />
               </div>
             </div>
-            <div className="flex items-center justify-start bg-gray-200 dark:bg-dark-search rounded-3xl px-4 m-4">
+            <div className="flex items-center text-sm justify-start bg-light-search dark:bg-dark-search rounded-3xl px-4 mx-4 my-2">
               <BsSearch />
               <input
                 type="text"
-                className="bg-gray-200 dark:bg-dark-search p-2 w-full outline-none text-black dark:text-white"
+                className="bg-light-search dark:bg-dark-search p-2 w-full outline-none text-black dark:text-dark-item-hover"
                 placeholder="Tìm kiếm trên Messenger"
               />
             </div>
             <ListMessageChat />
-            <div className="sticky bottom-[-1px] left-0 w-full z-10 bg-white dark:bg-dark-nav border-t dark:border-dark-nav">
-              <button className="w-full text-center text-blue-600 hover:underline p-2 font-semibold">
-                Xem tất cả trong Messenger
-              </button>
+            <div className="sticky bottom-[-1px] left-0 w-full z-10 bg-white dark:bg-dark-nav border-t dark:border-dark-search">
+              <Link to={'/messages'}>
+                <button className="w-full text-center text-blue-600 hover:underline p-2 font-semibold">
+                  Xem tất cả trong Messenger
+                </button>
+              </Link>
             </div>
           </Popover.Panel>
         </Transition>

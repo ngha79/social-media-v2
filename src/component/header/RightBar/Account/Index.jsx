@@ -1,9 +1,10 @@
 import { Popover, Transition } from '@headlessui/react'
 import React, { Fragment, useEffect, useState } from 'react'
-import { BsMoonFill } from 'react-icons/bs'
+import { FaMoon } from 'react-icons/fa'
 import { ImExit } from 'react-icons/im'
 import useDarkSide from '../../../utils/useDarkSide'
 import { AiOutlineArrowLeft } from 'react-icons/ai'
+import { Link } from 'react-router-dom'
 
 const Index = () => {
   const [themeOpen, setThemeOpen] = useState(false)
@@ -45,27 +46,30 @@ const Index = () => {
           leaveTo="opacity-0 translate-y-1"
         >
           {!themeOpen ? (
-            <Popover.Panel className="absolute z-10 top-16 bg-white dark:bg-dark-nav dark:text-white shadow p-4 rounded-md w-80 right-0 flex flex-col gap-y-2">
-              <div className="flex flex-col items-start justify-start shadow-sm rounded">
-                <div className="flex justify-start items-center gap-2 border border-gray-200 dark:border-transparent cursor-pointer hover:bg-dark-hover dark:hover:bg-dark-search transition-colors duration-200 w-full p-2 rounded">
-                  <div className="cursor-pointer h-max flex items-center">
+            <Popover.Panel className="absolute z-10 top-16 bg-white dark:bg-dark-nav dark:text-dark-item-hover shadow p-4 rounded-md w-80 right-0 flex flex-col gap-y-2">
+              <div className="flex flex-col items-start justify-start shadow-sm rounded-lg">
+                <Link
+                  to={'/profile/132'}
+                  className="w-full"
+                >
+                  <div className="flex justify-start overflow-hidden items-center gap-2 border border-gray-200 dark:border-transparent cursor-pointer hover:bg-dark-hover dark:hover:bg-dark-search transition-colors duration-200 w-full p-2 rounded-lg">
                     <img
                       src="https://scontent.fhan15-2.fna.fbcdn.net/v/t39.30808-6/353056562_915817816192346_4112625160337329471_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=EJj50W6YnhEAX9XCrXd&_nc_ht=scontent.fhan15-2.fna&oh=00_AfDoA-zhgrn2BexwnSUCqCsDFNCneOlywBEAcsfSk1w8Yw&oe=64F0ACF3"
                       alt=""
                       className="w-[40px] h-[40px] rounded-full cursor-pointer border border-gray-400 shadow"
                     />
+                    <span className="font-semibold truncate max-w-[160px] line-clamp-1">
+                      Nguyen ha ngu vclasddddddddddddddddddddd
+                    </span>
                   </div>
-                  <span className="font-semibold truncate w-40">
-                    Nguyen ha ngu vcl
-                  </span>
-                </div>
+                </Link>
               </div>
               <div
                 onClick={handleSetTheme}
                 className="flex items-center justify-start p-2 hover:bg-gray-200 dark:hover:bg-dark-search transition-colors duration-200 cursor-pointer gap-2 font-semibold rounded-md"
               >
                 <div className="bg-gray-200 dark:bg-dark-icon p-2 rounded-full">
-                  <BsMoonFill />
+                  <FaMoon />
                 </div>
                 <span>Màn hình</span>
               </div>
@@ -77,23 +81,23 @@ const Index = () => {
               </div>
             </Popover.Panel>
           ) : (
-            <Popover.Panel className="absolute z-10 top-16 bg-white dark:bg-dark-nav dark:text-white shadow p-4 rounded-md w-80 right-0 flex flex-col gap-y-2">
+            <Popover.Panel className="absolute z-10 top-16 bg-white dark:bg-dark-nav dark:text-dark-item-hover shadow p-4 rounded-md w-80 right-0 flex flex-col gap-y-2">
               <div className="flex items-center justify-start gap-2 px-2">
                 <div
                   className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-dark-icon cursor-pointer"
                   onClick={handleSetTheme}
                 >
-                  <AiOutlineArrowLeft className="dark:text-white" />
+                  <AiOutlineArrowLeft className="dark:text-dark-item-hover" />
                 </div>
                 <h4 className="font-bold text-2xl">Màn hình</h4>
               </div>
               <div className="flex items-start justify-start p-2 gap-2 font-semibold rounded-md">
                 <div className="bg-gray-200 p-2 rounded-full dark:bg-dark-icon">
-                  <BsMoonFill />
+                  <FaMoon />
                 </div>
                 <div className="flex flex-col justify-start gap-y-2">
-                  <span>Chế độ tối</span>
-                  <p>
+                  <span className="text-lg">Chế độ tối</span>
+                  <p className="text-sm font-normal">
                     Điều chỉnh giao diện của Facebook để giảm độ chói và cho đôi
                     mắt được nghỉ ngơi.
                   </p>
@@ -109,7 +113,7 @@ const Index = () => {
                         type="radio"
                         id="turn-off-theme"
                         defaultChecked={colorTheme === 'dark' ? true : false}
-                        value={''}
+                        value={colorTheme === 'dark' ? true : false}
                         name="default-radio"
                       />
                     </div>
@@ -125,7 +129,7 @@ const Index = () => {
                       <input
                         type="radio"
                         id="turn-on-theme"
-                        value={''}
+                        value={colorTheme !== 'dark' ? true : false}
                         defaultChecked={colorTheme !== 'dark' ? true : false}
                         name="default-radio"
                       />

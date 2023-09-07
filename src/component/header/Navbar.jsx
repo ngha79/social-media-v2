@@ -8,7 +8,7 @@ import RightBar from './RightBar/Index'
 
 const Navbar = () => {
   return (
-    <div className="sticky shadow border-b dark:border-gray-700 border-white flex items-center justify-between bg-white z-10 dark:bg-dark-nav">
+    <div className="fixed top-0 left-0 w-full shadow border-b dark:border-gray-700 border-white flex items-center justify-between bg-white z-10 dark:bg-dark-nav">
       <LeftBar />
       <CenterBar />
       <RightBar />
