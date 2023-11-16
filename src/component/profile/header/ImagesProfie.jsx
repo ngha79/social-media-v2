@@ -1,25 +1,29 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
 
-const ImagesProfie = () => {
+const ImagesProfie = ({ userId }) => {
+  const { user } = useSelector((state) => state.auth)
   return (
     <div className="flex flex-col bg-white p-4 dark:bg-dark-nav shadow rounded-md">
       <div className="flex items-center justify-between flex-col md:flex-row gap-y-4">
         <h1 className="font-bold text-lg">Ảnh</h1>
-        <div className="flex items-center gap-2 md:justify-end justify-center">
-          <label
-            htmlFor="upload-image"
-            className="text-blue-500 font-semibold hover:bg-gray-200 dark:hover:bg-dark-icon-story-hover p-2 rounded-md"
-          >
-            Thêm ảnh/video
-          </label>
-          <input
-            type="file"
-            multiple
-            name="upload-image"
-            id="upload-image"
-            className="hidden"
-          />
-        </div>
+        {userId === user?._id && (
+          <div className="flex items-center gap-2 md:justify-end justify-center">
+            <label
+              htmlFor="upload-image"
+              className="text-blue-500 font-semibold hover:bg-gray-200 dark:hover:bg-dark-icon-story-hover p-2 rounded-md"
+            >
+              Thêm ảnh/video
+            </label>
+            <input
+              type="file"
+              multiple
+              name="upload-image"
+              id="upload-image"
+              className="hidden"
+            />
+          </div>
+        )}
       </div>
       <div className="grid grid-cols-6 gap-x-2 gap-y-2 mt-8 min-h-[350px]">
         <img

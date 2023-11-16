@@ -1,11 +1,13 @@
-import React from 'react'
+import { useEffect } from 'react'
 import Friends from './Friends/Index'
 import GroupChat from './GroupChat/Index'
+import { useDispatch, useSelector } from 'react-redux'
+import { getAllFriends } from '../../../store/friends/friendSlice'
 
 const RightHome = () => {
   return (
-    <div className="max-w-[20%] w-full hidden lg:block">
-      <div className="fixed w-[20%] right-0 p-2 flex flex-col gap-y-2 overflow-y-scroll hidden-scrollbar h-full">
+    <div className="flex-1 hidden md:flex sticky top-0">
+      <div className="flex flex-col w-full gap-y-2 overflow-y-scroll hidden-scrollbar h-full">
         <Friends />
         <GroupChat />
       </div>

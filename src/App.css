@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+html,body,#root {
+  width: 100%;
+  height: 100vh;
+}
+
 .hidden-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -11,11 +16,11 @@
 }
 
 .height-layout {
-  height: calc(100vh-58px);
+  height: calc(100vh-57px);
 }
 
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 12px;
 }
 
 /* Track */
@@ -37,4 +42,18 @@
 
 img {
   object-fit: cover;
+}
+
+.react-images__view {
+  display: flex;
+  justify-content: center;
+}
+
+
+.avtive-react:target>.show-react {
+  display: flex;
+}
+
+.show-react {
+  display: none;
 }

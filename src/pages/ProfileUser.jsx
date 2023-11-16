@@ -1,8 +1,7 @@
-import React from 'react'
 import ProfileLayout from '../component/profile/Index'
 
-const ProfileUser = () => {
-  return <ProfileLayout />
+const ProfileUser = ({ profile }) => {
+  return <ProfileLayout user={profile} />
 }
 
 export default ProfileUser

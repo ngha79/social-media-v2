@@ -1,23 +1,47 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Tab } from '@headlessui/react'
 import PostProfile from './PostProfile'
 import Introduce from './Introduce'
 import FriendsProfile from './FriendsProfile'
 import ImagesProfie from './ImagesProfie'
-import { Link, Outlet } from 'react-router-dom'
+import {
+  Link,
+  Outlet,
+  useLocation,
+  useNavigate,
+  useParams,
+} from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
 const ListFunction = () => {
-  const [list] = useState({
-    'Bài viết': <PostProfile />,
-    'Giới thiệu': <Introduce />,
-    'Bạn bè': <FriendsProfile />,
-    Ảnh: <ImagesProfie />,
+  const [list, setList] = useState({
+    '': { name: 'Bài viết', component: <PostProfile /> },
+    '/about': { name: 'Giới thiệu', component: <Introduce /> },
+    '/friends': { name: 'Bạn bè', component: <FriendsProfile /> },
+    '/picture': { name: 'Ảnh', component: <ImagesProfie /> },
   })
+  const { profile } = useSelector((state) => state.auth)
+  const [component, setComponent] = useState('')
+  const { name, id } = useParams()
+  const handlePushLocation = (ref) => {
+    window.history.replaceState(
+      null,
+      '',
+      `/${name || profile?.name}/${id || profile?._id}${ref}`
+    )
+    setComponent(ref)
+  }
 
+  const { pathname } = useLocation()
+  useEffect(() => {
+    setComponent(
+      pathname?.split('/')?.[3] ? `/${pathname?.split('/')?.[3]}` : ''
+    )
+  }, [pathname])
   return (
     <div className="w-full flex justify-center flex-col items-center">
       <Tab.Group>
@@ -38,8 +62,9 @@ const ListFunction = () => {
                     : 'text-dark-icon-story dark:text-light-search hover:bg-gray-100 dark:hover:bg-dark-icon-story-hover dark:hover:border-dark-icon-story-hover rounded-lg border-transparent'
                 )
               }
+              onClick={() => handlePushLocation(item)}
             >
-              {item}
+              {list?.[item]?.name}
               <div
                 className={({ selected }) =>
                   classNames(
@@ -57,10 +82,8 @@ const ListFunction = () => {
             'bg-gray-100 w-full h-full flex justify-center dark:bg-dark-theme'
           }
         >
-          <div className="max-w-[1200px] w-full p-4">
-            {Object.values(list).map((item, index) => (
-              <Tab.Panel key={index}>{item}</Tab.Panel>
-            ))}
+          <div className="max-w-[1200px] w-full pt-8">
+            {list?.[component]?.component}
           </div>
         </Tab.Panels>
       </Tab.Group>

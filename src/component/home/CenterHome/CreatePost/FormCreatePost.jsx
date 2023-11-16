@@ -3,15 +3,99 @@ import { Fragment, useRef, useState } from 'react'
 import { AiOutlineClose } from 'react-icons/ai'
 import { BsEmojiSmile, BsImages } from 'react-icons/bs'
 import FormUploadImage from './FormUploadImage'
+import ListTypePost from './ListTypePost'
+import RequestApi from '../../../../helper/api'
+import { useDispatch, useSelector } from 'react-redux'
+import { toast } from 'react-toastify'
+import Loading from '../../../Loading'
+import { createPost } from '../../../../store/post/postSlice'
 
 const FormCreatePost = ({
+  user,
   isOpen,
   closeModal,
   image,
   openImage,
   closeImage,
 }) => {
-  const [description, setDescription] = useState('')
+  const { loading } = useSelector((state) => state.posts)
+  const [imagesShow, setImagesShow] = useState([])
+  const [formData, setFormData] = useState({
+    text: '',
+    images: '',
+    typePost: 'public',
+  })
+  const dispatch = useDispatch()
+
+  const handleUploadImages = (e) => {
+    if (e.target.files) {
+      Array.from(e.target.files).forEach((file) => {
+        const images = URL.createObjectURL(file)
+        setImagesShow((imagesShow) => [...imagesShow, images])
+      })
+      const newArray = Array.from(formData.images)
+      Array.from(e.target.files).map((image) => newArray.push(image))
+      setFormData((formData) => ({
+        ...formData,
+        images: newArray,
+      }))
+      imagesShow?.forEach((file) => {
+        URL.revokeObjectURL(file)
+      })
+    }
+  }
+
+  const handleCloseImage = () => {
+    setImagesShow([])
+    setFormData((formData) => ({ ...formData, images: '' }))
+    closeImage()
+  }
+
+  const hanleOnChange = (e) => {
+    setFormData((formData) => ({
+      ...formData,
+      [e.target.name]: e.target.value,
+    }))
+  }
+
+  const handleSetTypePost = (type) => {
+    setFormData((formData) => ({
+      ...formData,
+      typePost: type,
+    }))
+  }
+
+  const handleOnClose = () => {
+    setFormData({
+      text: '',
+      images: '',
+      typePost: 'public',
+    })
+    setImagesShow([])
+    closeModal()
+  }
+
+  const handleCreatePost = async () => {
+    try {
+      const form = new FormData()
+      form.append('text', formData.text)
+      form.append('typePost', formData.typePost)
+      form.append('authorId', user?._id)
+      if (formData.images.length) {
+        for (let i = 0; i < formData.images.length; i++) {
+          form.append('images', formData.images[i])
+        }
+      }
+      dispatch(createPost(form))
+      handleOnClose()
+    } catch (error) {
+      toast.error('Có lỗi xảy ra, vui lòng thử lại sau!')
+    }
+  }
+
+  if (loading) {
+    return <Loading />
+  }
 
   return (
     <Transition
@@ -22,7 +106,7 @@ const FormCreatePost = ({
       <Dialog
         as="div"
         className="relative z-10"
-        onClose={closeModal}
+        onClose={handleOnClose}
       >
         <Transition.Child
           as={Fragment}
@@ -56,29 +140,39 @@ const FormCreatePost = ({
                 </Dialog.Title>
                 <div
                   className="absolute top-2 right-2 cursor-pointer hover:opacity-80 dark:bg-dark-search p-2 rounded-full"
-                  onClick={closeModal}
+                  onClick={handleOnClose}
                 >
                   <AiOutlineClose size={20} />
                 </div>
                 <div className="p-4 space-y-4">
                   <div className="flex items-start justify-start gap-2">
                     <img
-                      src="https://scontent.fhan15-2.fna.fbcdn.net/v/t39.30808-6/353056562_915817816192346_4112625160337329471_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=EJj50W6YnhEAX9XCrXd&_nc_ht=scontent.fhan15-2.fna&oh=00_AfDoA-zhgrn2BexwnSUCqCsDFNCneOlywBEAcsfSk1w8Yw&oe=64F0ACF3"
+                      src={user?.avatar}
                       alt=""
                       className="min-w-[40px] w-[40px] h-[40px] rounded-full cursor-pointer border border-gray-400 shadow"
                     />
-                    <span className="font-semibold ">Hang uvcl</span>
+                    <div className="flex flex-col">
+                      <span className="font-semibold ">{user?.name}</span>
+                      <ListTypePost handleSetTypePost={handleSetTypePost} />
+                    </div>
                   </div>
                   <div className="mt-2">
                     <textarea
                       type="text"
+                      name="text"
                       rows={4}
                       className="w-full min-h-[100px] outline-none text-lg dark:bg-dark-nav"
                       placeholder="Bạn đang nghĩ gì thế?"
-                      onChange={(e) => setDescription(e.target.value)}
+                      onChange={hanleOnChange}
                     />
                   </div>
-                  {image && <FormUploadImage closeImage={closeImage} />}
+                  {image && (
+                    <FormUploadImage
+                      closeImage={handleCloseImage}
+                      handleUploadImages={handleUploadImages}
+                      images={imagesShow}
+                    />
+                  )}
                   <div className="flex items-center justify-between gap-4 border rounded-lg p-4 shadow-sm dark:border-[#4a4b4b]">
                     <span className="flex-1 line-clamp-1 text-[15px] font-semibold">
                       Thêm vào bài viết của bạn
@@ -107,12 +201,16 @@ const FormCreatePost = ({
                     <button
                       type="button"
                       className={`inline-flex w-full justify-center rounded-md border border-transparent ${
-                        description.length > 0
-                          ? 'bg-blue-500'
+                        formData?.text?.length || formData?.images?.length
+                          ? 'bg-blue-500 cursor-pointer'
                           : 'dark:bg-[#505151] bg-gray-300 cursor-not-allowed'
                       } text-white px-4 py-2 text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2`}
-                      onClick={closeModal}
-                      disabled={description.length > 0 ? false : true}
+                      onClick={handleCreatePost}
+                      disabled={
+                        formData?.text?.length || formData?.images?.length
+                          ? false
+                          : true
+                      }
                     >
                       Đăng
                     </button>

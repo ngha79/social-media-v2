@@ -2,8 +2,14 @@ import { Menu, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
 import { AiOutlineCloseCircle } from 'react-icons/ai'
 import { BsThreeDots } from 'react-icons/bs'
+import { deleteAllMiniPopup } from '../../../store/conversation/conversationSlice'
+import { useDispatch } from 'react-redux'
 
 export default function MenuListPopup() {
+  const dispatch = useDispatch()
+  const handleDeletePopup = () => {
+    dispatch(deleteAllMiniPopup())
+  }
   return (
     <div className="z-10">
       <Menu
@@ -29,6 +35,7 @@ export default function MenuListPopup() {
               <Menu.Item>
                 {({ active }) => (
                   <button
+                    onClick={handleDeletePopup}
                     className={`${
                       active
                         ? 'bg-gray-200 dark:bg-dark-icon-story-hover'

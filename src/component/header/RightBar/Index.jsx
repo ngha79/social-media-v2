@@ -8,7 +8,7 @@ const Index = () => {
   const { pathname } = useLocation()
 
   return (
-    <div className="flex items-center gap-2 justify-end w-[20%] h-full py-2 pr-4">
+    <div className="flex flex-1 items-center gap-2 justify-end w-[20%] h-full py-2 pr-4">
       {pathname !== '/messages' && <Message />}
 
       <Notifications />

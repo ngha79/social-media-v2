@@ -7,9 +7,9 @@ import TypeChatList from './TypeChatList'
 const ListChat = ({ handleSetOpenChat, openChat }) => {
   return (
     <div
-      className={`w-full ${
+      className={`${
         openChat ? 'hidden md:block' : 'block'
-      } max-h-[calc(100vh-58px)] min-[900px]:max-w-[360px] h-full border-r border-gray-200 dark:border-dark-icon-story-hover bg-white dark:bg-dark-nav`}
+      } h-full w-full min-[900px]:max-w-[360px] border-r border-gray-200 dark:border-dark-icon-story-hover bg-white dark:bg-dark-nav`}
     >
       <div className="flex items-center justify-between p-4">
         <h1 className="text-2xl font-bold">Chat</h1>

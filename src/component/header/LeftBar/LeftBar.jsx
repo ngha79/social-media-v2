@@ -1,29 +1,46 @@
-import React from 'react'
-import { FaFacebook } from 'react-icons/fa'
-import { AiFillFacebook, AiOutlineSearch } from 'react-icons/ai'
-import { BsFacebook } from 'react-icons/bs'
+import { useState } from 'react'
+import { AiOutlineSearch } from 'react-icons/ai'
 import { BiLogoFacebook } from 'react-icons/bi'
+import { Link, useNavigate } from 'react-router-dom'
 
 const LeftBar = () => {
+  const [search, setSearch] = useState('')
+  const navigate = useNavigate()
+  const handleSearch = (e) => {
+    e.preventDefault()
+    navigate(`/search/top?search=${search}`)
+  }
+
   return (
-    <div className="flex items-center justify-start gap-2 w-[20%] py-2 pl-4">
+    <div className="flex items-center flex-1 justify-start gap-2 w-[20%] py-2 pl-4">
       <div className="rounded-full cursor-pointer w-max border  bg-blue-500 border-blue-500">
-        <a href="/">
+        <Link to="/">
           <BiLogoFacebook
             className="text-white"
             size={40}
           />
-        </a>
+        </Link>
       </div>
-      <div className="pl-2 relative rounded-2xl text-gray-600 dark:text-dark-item-hover flex items-center justify-start gap-2 border-2 border-light-search bg-light-search dark:bg-dark-search dark:border-dark-search">
-        <AiOutlineSearch />
+      <form
+        onSubmit={handleSearch}
+        className="ml-2 relative rounded-2xl text-gray-600 dark:text-dark-item-hover flex items-center justify-start border-2 border-light-search bg-light-search dark:bg-dark-search dark:border-dark-search"
+      >
+        <label
+          htmlFor="search"
+          className="p-2"
+        >
+          <AiOutlineSearch />
+        </label>
         <input
-          className="text-sm focus:outline-none rounded-2xl bg-light-search dark:bg-dark-search p-2"
+          className="text-sm focus:outline-none w-0 focus:p-2 md:w-[200px] focus:max-w-[300px] focus:min-w-[250px] z-10 rounded-2xl bg-light-search dark:bg-dark-search md:p-2"
           type="search"
           name="search"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          id="search"
           placeholder="Search"
         />
-      </div>
+      </form>
     </div>
   )
 }

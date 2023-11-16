@@ -3,10 +3,16 @@ import React, { Fragment } from 'react'
 import { BsMessenger, BsSearch, BsThreeDots } from 'react-icons/bs'
 import ListMessageChat from './ListMessageChat/Index'
 import { Link } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { openMiniPopup } from '../../../../store/conversation/conversationSlice'
 
 const Index = () => {
+  const dispatch = useDispatch()
+  const handleSetOpenChat = (chat) => {
+    dispatch(openMiniPopup(chat))
+  }
   return (
-    <div className="">
+    <div className="hidden min-[768px]:flex">
       <Popover
         className={
           'relative h-max flex items-center justify-center transition-all duration-200 translate-x-1'
@@ -50,9 +56,9 @@ const Index = () => {
                 placeholder="Tìm kiếm trên Messenger"
               />
             </div>
-            <ListMessageChat />
+            <ListMessageChat handleSetOpenChat={handleSetOpenChat} />
             <div className="sticky bottom-[-1px] left-0 w-full z-10 bg-white dark:bg-dark-nav border-t dark:border-dark-search">
-              <Link to={'/messages'}>
+              <Link to={'/messages/all'}>
                 <button className="w-full text-center text-blue-600 hover:underline p-2 font-semibold">
                   Xem tất cả trong Messenger
                 </button>

@@ -1,13 +1,21 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
 
-const BackgroundImageUser = () => {
+const BackgroundImageUser = ({ background }) => {
   return (
     <div className="bg-white dark:bg-dark-nav overflow-hidden w-full flex items-start justify-center">
-      <div className="max-w-[1200px] max-h-[400px] min-h-[200px] h-auto rounded-b-xl overflow-hidden transition-transform duration-200 w-full flex items-center justify-center">
-        <img
-          src="https://scontent.fhan5-2.fna.fbcdn.net/v/t39.30808-6/240527394_520194609088004_8050637018545073386_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=1b51e3&_nc_ohc=c7l47JoSOEwAX9SOBiD&_nc_ht=scontent.fhan5-2.fna&oh=00_AfDSfjWouXoxoDBSfXHtnjWMrRxDlBNNakYd7hIpcltf3Q&oe=64F7F7A7"
-          alt=""
-        />
+      <div className="max-w-[1200px] max-h-[400px] bg-gray-100 dark:bg-dark-icon-hover min-h-[300px] h-auto rounded-b-xl overflow-hidden transition-transform duration-200 w-full flex items-center justify-center">
+        {background ? (
+          <div
+            style={{ backgroundImage: `url(${background})` }}
+            alt=""
+            className="bg-cover bg-no-repeat w-full h-full bg-center"
+          >
+            <div className="h-full w-full max-h-[400px] md:min-h-[400px] min-h-[300px]"></div>
+          </div>
+        ) : (
+          <div></div>
+        )}
       </div>
     </div>
   )

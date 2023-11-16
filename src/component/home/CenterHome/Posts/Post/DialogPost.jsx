@@ -1,13 +1,19 @@
 import { Dialog, Transition } from '@headlessui/react'
-import { Fragment, useState } from 'react'
+import { Fragment } from 'react'
 import { AiOutlineClose } from 'react-icons/ai'
-import { FaRegCommentAlt } from 'react-icons/fa'
 import ContentPost from './ContentPost'
-import ReactPost from './ReactPost'
 import CreateComment from './CreateComment'
 import Comments from './Comments/Comments'
+import ReactInPost from './ReactInPost'
 
-export default function DialogPost({ isOpen, closeModal, openModal }) {
+export default function DialogPost({
+  isOpen,
+  closeModal,
+  post,
+  handleSetTotalComment,
+  totalComment,
+  totalCommentParent,
+}) {
   return (
     <Transition
       appear
@@ -31,7 +37,7 @@ export default function DialogPost({ isOpen, closeModal, openModal }) {
           <div className="fixed inset-0 bg-black bg-opacity-25" />
         </Transition.Child>
 
-        <div className="fixed inset-0 overflow-y-auto">
+        <div className="fixed z-10 inset-0 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center text-center">
             <Transition.Child
               as={Fragment}
@@ -47,7 +53,7 @@ export default function DialogPost({ isOpen, closeModal, openModal }) {
                   as="h3"
                   className="text-lg sticky top-0 left-0 border-b dark:border-dark-icon-story-hover p-4 text-center font-medium leading-6 text-gray-900  dark:text-dark-item-hover"
                 >
-                  Bài viết của Sting World
+                  Bài viết của {post?.author?.name}
                   <div
                     onClick={closeModal}
                     className="absolute top-2 right-2 p-2 rounded-full cursor-pointer hover:bg-gray-200 dark:hover:bg-dark-icon-story-hover"
@@ -56,11 +62,29 @@ export default function DialogPost({ isOpen, closeModal, openModal }) {
                   </div>
                 </Dialog.Title>
                 <div className="overflow-y-scroll max-h-[80vh]">
-                  <ContentPost />
-                  <ReactPost />
-                  <Comments />
+                  <ContentPost
+                    text={post?.text}
+                    images={post?.images}
+                    type={'post'}
+                    author={post?.author}
+                    postId={post?._id}
+                    post={post}
+                  />
+                  <ReactInPost
+                    post={post}
+                    totalComment={totalComment}
+                  />
+                  <Comments
+                    post={post}
+                    handleSetTotalComment={handleSetTotalComment}
+                    totalComment={totalComment}
+                    totalCommentParent={totalCommentParent}
+                  />
                 </div>
-                <CreateComment />
+                <CreateComment
+                  post={post}
+                  handleSetTotalComment={handleSetTotalComment}
+                />
               </Dialog.Panel>
             </Transition.Child>
           </div>

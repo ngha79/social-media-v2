@@ -1,14 +1,35 @@
 import { Dialog, Transition } from '@headlessui/react'
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { AiOutlineClose } from 'react-icons/ai'
 import { BiSolidPencil } from 'react-icons/bi'
 import UpdateAvatar from './UpdateAvatar'
 import BackgroundImage from './BackgroundImage'
 import UpdateAboutUser from './UpdateAboutUser'
 import StoryUser from './StoryUser'
+import { useDispatch, useSelector } from 'react-redux'
+import RequestApi from '../../../../helper/api'
+import { useNavigate } from 'react-router-dom'
+import { setUser, updateUser } from '../../../../store/auth/authSlice'
+import { toast } from 'react-toastify'
+import Loading from '../../../Loading'
 
 export default function UpdateProfile() {
+  const { user, loading } = useSelector((state) => state.auth)
+  const [avatar, setAvatar] = useState(user?.avatar)
+  const [background, setBackground] = useState(user?.backgroundImage)
   let [isOpen, setIsOpen] = useState(false)
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const [formData, setFormData] = useState({
+    avatar: '',
+    backgroundImage: '',
+    residence: user?.residence,
+    address: user?.address,
+    story: user?.story,
+    workplace: user?.workplace,
+    education: user?.education,
+    dateOfBirth: user?.dateOfBirth,
+  })
 
   function closeModal() {
     setIsOpen(false)
@@ -16,6 +37,88 @@ export default function UpdateProfile() {
 
   function openModal() {
     setIsOpen(true)
+  }
+
+  const handleOnchange = (e) => {
+    setFormData((formData) => ({
+      ...formData,
+      [e.target.name]: e.target.value,
+    }))
+  }
+
+  const handleCancelOnchange = (e) => {
+    setFormData((formData) => ({
+      ...formData,
+      [e.target.name]: user?.[e.target.name],
+    }))
+  }
+
+  const handleCancelAbout = (e) => {
+    setFormData((formData) => ({
+      ...formData,
+      residence: user.residence,
+      address: user.address,
+      workplace: user.workplace,
+      education: user.education,
+      dateOfBirth: user.dateOfBirth,
+    }))
+  }
+
+  const removeEmptyValues = (object) => {
+    const keys = Object.keys(object)
+    for (var i = 0; i < keys.length; ++i) {
+      const key = keys[i]
+      const value = object[key]
+      if (value === null || value === undefined || value === '') {
+        delete object[key]
+      }
+    }
+    return object
+  }
+
+  const handleUploadAvatar = (e) => {
+    if (e.target.files) {
+      const avatarImage = URL.createObjectURL(e.target.files[0])
+      setAvatar(avatarImage)
+      setFormData((formData) => ({ ...formData, avatar: e.target.files[0] }))
+      URL.revokeObjectURL(e.target.files[0])
+    }
+  }
+
+  const handleCancelUploadAvatar = (e) => {
+    setAvatar(user?.avatar)
+    setFormData((formData) => ({ ...formData, avatar: '' }))
+  }
+
+  const handleUploadBackground = (e) => {
+    if (e.target.files) {
+      setFormData((formData) => ({
+        ...formData,
+        backgroundImage: e.target.files[0],
+      }))
+      const avatarImage = URL.createObjectURL(e.target.files[0])
+      setBackground(avatarImage)
+      URL.revokeObjectURL(e.target.files[0])
+    }
+  }
+
+  const handleCancelUploadBackground = (e) => {
+    setFormData((formData) => ({
+      ...formData,
+      backgroundImage: '',
+    }))
+    setBackground(user?.backgroundImage)
+  }
+
+  const handleUpdateProfileUser = async (e) => {
+    e.preventDefault()
+    const data = removeEmptyValues(formData)
+    dispatch(updateUser(data))
+    closeModal()
+  }
+
+  if (loading) {
+    return <Loading />
   }
 
   return (
@@ -76,10 +179,38 @@ export default function UpdateProfile() {
                       <AiOutlineClose />
                     </button>
                   </Dialog.Title>
-                  <UpdateAvatar />
-                  <BackgroundImage />
-                  <StoryUser />
-                  <UpdateAboutUser />
+                  <UpdateAvatar
+                    avatar={avatar}
+                    handleUploadAvatar={handleUploadAvatar}
+                    handleCancelUploadAvatar={handleCancelUploadAvatar}
+                  />
+                  <BackgroundImage
+                    backgroundImage={background}
+                    handleUploadBackground={handleUploadBackground}
+                    handleCancelUploadBackground={handleCancelUploadBackground}
+                  />
+                  <StoryUser
+                    story={formData?.story}
+                    handleOnchange={handleOnchange}
+                    handleCancelOnchange={handleCancelOnchange}
+                  />
+
+                  <UpdateAboutUser
+                    address={formData?.address}
+                    education={formData?.education}
+                    residence={formData?.residence}
+                    workplace={formData?.workplace}
+                    handleOnchange={handleOnchange}
+                    handleCancelOnchange={handleCancelAbout}
+                  />
+                  <div className="w-full px-8">
+                    <button
+                      onClick={handleUpdateProfileUser}
+                      className="w-full my-4 py-2 text-lg font-semibold rounded-md bg-blue-500 text-light-search hover:bg-blue-600"
+                    >
+                      Cập nhật
+                    </button>
+                  </div>
                 </Dialog.Panel>
               </Transition.Child>
             </div>

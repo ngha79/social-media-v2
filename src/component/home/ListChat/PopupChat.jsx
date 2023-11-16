@@ -1,20 +1,51 @@
 import React from 'react'
 import { AiOutlineClose } from 'react-icons/ai'
+import { useDispatch, useSelector } from 'react-redux'
+import {
+  deleteMiniPopup,
+  openMiniPopup,
+} from '../../../store/conversation/conversationSlice'
 
-const PopupChat = () => {
+const PopupChat = ({ chat }) => {
+  const { user } = useSelector((state) => state.auth)
+  const dispatch = useDispatch()
+  const { avatarConversation, memberConversation, nameConversation } = chat
+  const avatar =
+    avatarConversation ||
+    memberConversation.filter((member) => member !== user?._id)?.[0]?.avatar
+  const name =
+    nameConversation ||
+    memberConversation.filter((member) => member !== user?._id)?.[0]?.name
+  const handleOpenPopup = () => {
+    dispatch(openMiniPopup(chat))
+  }
+  const handledeleteIconPopup = () => {
+    dispatch(deleteMiniPopup(chat))
+  }
   return (
     <div className="relative cursor-pointer group">
       <img
-        src="https://scontent.fhan5-11.fna.fbcdn.net/v/t39.30808-1/353056562_915817816192346_4112625160337329471_n.jpg?stp=c0.48.160.160a_dst-jpg_p160x160&_nc_cat=100&ccb=1-7&_nc_sid=fe8171&_nc_ohc=qwzobo5I_hgAX-bhEmI&_nc_ht=scontent.fhan5-11.fna&oh=00_AfBdIyG-Hpw4xWh6CoLr1ExYpEGbLQwRRrNtSY7GFsKXDw&oe=64FB6E35"
-        alt=""
+        onClick={handleOpenPopup}
+        src={avatar}
+        alt="Popup user"
+        title={name}
         className="w-[50px] h-[50px] rounded-full"
       />
-      <div className="absolute -top-1 shadow-sm -right-1 hidden p-1 group-hover:block bg-white dark:bg-dark-icon-story dark:hover:bg-dark-icon-story-hover rounded-full hover:bg-gray-100">
+      <div
+        onClick={handledeleteIconPopup}
+        className="absolute -top-1 shadow-sm -right-1 hidden p-1 group-hover:block bg-white dark:bg-dark-icon-story dark:hover:bg-dark-icon-story-hover rounded-full hover:bg-gray-100"
+      >
         <AiOutlineClose size={16} />
       </div>
-      <div className="absolute bottom-[2px] shadow-sm right-[2px] p-[1px] bg-white rounded-full">
-        <div className="bg-green-500 p-1 rounded-full"></div>
-      </div>
+      {memberConversation.find((member) => member.lastLogin === 'null') ? (
+        <div className="absolute bottom-[2px] shadow-sm right-[2px] p-[1px] bg-white rounded-full">
+          <div className="bg-green-500 p-1 rounded-full"></div>
+        </div>
+      ) : (
+        <div className="absolute bottom-[2px] shadow-sm right-[2px] p-[1px] bg-white rounded-full">
+          <div className="bg-red-400 p-1 rounded-full"></div>
+        </div>
+      )}
     </div>
   )
 }

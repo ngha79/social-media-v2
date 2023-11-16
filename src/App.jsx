@@ -13,13 +13,25 @@ import HomeFriends from './component/friends/RightBar/HomeFriends/Index'
 import FriendRequest from './component/friends/RightBar/FriendsRequest/Index'
 import FriendsSuggest from './component/friends/RightBar/FriendsSuggest/Index'
 import AllFriends from './component/friends/RightBar/AllFriends/Index'
-import DetailProfile from './component/profile/header/DetailProfile'
-import FriendsProfile from './component/profile/header/FriendsProfile'
-import Introduce from './component/profile/header/Introduce'
-import ImagesProfie from './component/profile/header/ImagesProfie'
-import PostProfile from './component/profile/header/PostProfile'
+import UpdateUser from './pages/UpdateUser'
+import Signup from './pages/Signup'
+import FriendInvited from './component/friends/RightBar/FriendsInvited/Index'
+import PostDetail from './pages/PostDetail'
+import { useDispatch, useSelector } from 'react-redux'
+import moment from 'moment/min/moment-with-locales'
+import vi from 'moment/locale/vi'
+import CallRoom from './pages/CallRoom'
+import VideoRoom from './pages/VideoRoom'
+import ForgotPassword from './pages/ForgotPassword'
+import UpdateForgotPassword from './pages/UpdateForgotPassword'
+import SearchResult from './pages/SearchResult'
+import TopSearch from './component/search/TopSearch'
+import PostSearch from './component/search/PostSearch'
+import UserSearch from './component/search/UserSearch'
 
 function App() {
+  moment.updateLocale('vi', vi)
+
   const router = createBrowserRouter([
     {
       path: '/',
@@ -29,9 +41,24 @@ function App() {
           path: '',
           element: <Home />,
         },
+
         {
-          path: 'setting',
-          element: <Setting />,
+          path: 'search/',
+          element: <SearchResult />,
+          children: [
+            {
+              path: 'top',
+              element: <TopSearch />,
+            },
+            {
+              path: 'post',
+              element: <PostSearch />,
+            },
+            {
+              path: 'user',
+              element: <UserSearch />,
+            },
+          ],
         },
         {
           path: 'friends/',
@@ -46,14 +73,12 @@ function App() {
               element: <FriendRequest />,
             },
             {
-              path: 'suggestions/',
+              path: 'invited',
+              element: <FriendInvited />,
+            },
+            {
+              path: 'suggestions',
               element: <FriendsSuggest />,
-              children: [
-                {
-                  path: '*',
-                  element: <ProfileUser />,
-                },
-              ],
             },
             {
               path: 'list',
@@ -66,22 +91,50 @@ function App() {
           element: <Notifications />,
         },
         {
-          path: 'messages',
+          path: 'messages/:conversationId',
           element: <Messages />,
         },
         {
-          path: ':id',
+          path: ':name/:id/*',
           element: <Profile />,
         },
         {
-          path: 'user/*',
+          path: 'user/:name/:id/',
           element: <ProfileUser />,
+        },
+        {
+          path: 'post/:postId',
+          element: <PostDetail />,
+        },
+        {
+          path: 'video/:roomId',
+          element: <VideoRoom />,
+        },
+        {
+          path: 'call/:roomId',
+          element: <CallRoom />,
         },
       ],
     },
     {
+      path: '/update/user',
+      element: <UpdateUser />,
+    },
+    {
       path: '/login',
       element: <Login />,
+    },
+    {
+      path: '/signup',
+      element: <Signup />,
+    },
+    {
+      path: '/forgot-password',
+      element: <ForgotPassword />,
+    },
+    {
+      path: '/update/forgot-password',
+      element: <UpdateForgotPassword />,
     },
   ])
 

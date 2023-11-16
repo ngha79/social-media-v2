@@ -3,8 +3,8 @@ import HeaderLeft from './HeaderLeft/Index'
 
 const LeftHome = () => {
   return (
-    <div className="w-[20%] hidden md:block">
-      <div className="fixed left-0 p-2 w-[20%] flex flex-col gap-y-2 overflow-y-scroll hidden-scrollbar h-full">
+    <div className="flex-1 hidden lg:flex sticky top-0">
+      <div className="flex w-full gap-y-2 overflow-y-scroll hidden-scrollbar h-full">
         <HeaderLeft />
       </div>
     </div>

@@ -2,13 +2,20 @@ import { Popover, Transition } from '@headlessui/react'
 import React, { Fragment, useEffect, useState } from 'react'
 import { FaMoon } from 'react-icons/fa'
 import { ImExit } from 'react-icons/im'
-import useDarkSide from '../../../utils/useDarkSide'
 import { AiOutlineArrowLeft } from 'react-icons/ai'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import useDarkSide from '../../../../utils/useDarkSide'
+import { useDispatch, useSelector } from 'react-redux'
+import RequestApi from '../../../../helper/api'
+import { logout } from '../../../../store/auth/authSlice'
+import ChangePassword from '../../../user/ChangePassword'
 
 const Index = () => {
-  const [themeOpen, setThemeOpen] = useState(false)
+  const { user } = useSelector((state) => state.auth)
 
+  const [themeOpen, setThemeOpen] = useState(false)
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
   const handleSetTheme = () => {
     setThemeOpen(!themeOpen)
   }
@@ -16,6 +23,10 @@ const Index = () => {
 
   const handleChangeThemeMode = (theme) => {
     setTheme(theme)
+  }
+
+  const handleLogout = async () => {
+    dispatch(logout())
   }
   return (
     <div className="">
@@ -30,7 +41,7 @@ const Index = () => {
             onClick={() => setThemeOpen(false)}
           >
             <img
-              src="https://scontent.fhan15-2.fna.fbcdn.net/v/t39.30808-6/353056562_915817816192346_4112625160337329471_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=EJj50W6YnhEAX9XCrXd&_nc_ht=scontent.fhan15-2.fna&oh=00_AfDoA-zhgrn2BexwnSUCqCsDFNCneOlywBEAcsfSk1w8Yw&oe=64F0ACF3"
+              src={user?.avatar}
               alt=""
               className="w-[40px] h-[40px] rounded-full cursor-pointer"
             />
@@ -49,17 +60,17 @@ const Index = () => {
             <Popover.Panel className="absolute z-10 top-16 bg-white dark:bg-dark-nav dark:text-dark-item-hover shadow p-4 rounded-md w-80 right-0 flex flex-col gap-y-2">
               <div className="flex flex-col items-start justify-start shadow-sm rounded-lg">
                 <Link
-                  to={'/profile/132'}
+                  to={`/${user?.name}/${user?._id}`}
                   className="w-full"
                 >
                   <div className="flex justify-start overflow-hidden items-center gap-2 border border-gray-200 dark:border-transparent cursor-pointer hover:bg-dark-hover dark:hover:bg-dark-search transition-colors duration-200 w-full p-2 rounded-lg">
                     <img
-                      src="https://scontent.fhan15-2.fna.fbcdn.net/v/t39.30808-6/353056562_915817816192346_4112625160337329471_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=EJj50W6YnhEAX9XCrXd&_nc_ht=scontent.fhan15-2.fna&oh=00_AfDoA-zhgrn2BexwnSUCqCsDFNCneOlywBEAcsfSk1w8Yw&oe=64F0ACF3"
+                      src={user?.avatar}
                       alt=""
                       className="w-[40px] h-[40px] rounded-full cursor-pointer border border-gray-400 shadow"
                     />
                     <span className="font-semibold truncate max-w-[160px] line-clamp-1">
-                      Nguyen ha ngu vclasddddddddddddddddddddd
+                      {user?.name}
                     </span>
                   </div>
                 </Link>
@@ -73,7 +84,11 @@ const Index = () => {
                 </div>
                 <span>Màn hình</span>
               </div>
-              <div className="flex items-center justify-start p-2 hover:bg-gray-200 dark:hover:bg-dark-search transition-colors duration-200 cursor-pointer gap-2 font-semibold rounded-md">
+              <ChangePassword />
+              <div
+                onClick={handleLogout}
+                className="flex items-center justify-start p-2 hover:bg-gray-200 dark:hover:bg-dark-search transition-colors duration-200 cursor-pointer gap-2 font-semibold rounded-md"
+              >
                 <div className="bg-gray-200 dark:bg-dark-icon p-2 rounded-full">
                   <ImExit />
                 </div>
