@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
 import { setUser } from '../store/auth/authSlice'
+const VITE_REACT_APP_API_URL = import.meta.env.VITE_REACT_APP_API_URL
 
 const Signup = () => {
   const { user } = useSelector((state) => state.auth)
@@ -21,11 +22,11 @@ const Signup = () => {
   }
 
   const handleLoginGoogle = () => {
-    window.open('http://localhost:5000/api/v1/auth/google', '_self')
+    window.open(`${VITE_REACT_APP_API_URL}/auth/google`, '_self')
     function getUser() {
       axios({
         method: 'GET',
-        url: 'http://localhost:5000/api/v1/auth/profile',
+        url: `${VITE_REACT_APP_API_URL}/auth/profile`,
       })
     }
     getUser()
@@ -41,7 +42,7 @@ const Signup = () => {
     }
     await axios({
       method: 'POST',
-      url: 'http://localhost:5000/api/v1/auth/signup',
+      url: '${VITE_REACT_APP_API_URL}/auth/signup',
       data: { ...account },
       withCredentials: true,
     })

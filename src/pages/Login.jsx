@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
 import { setUser } from '../store/auth/authSlice'
 import { socket } from '../utils/socket'
+const VITE_REACT_APP_API_URL = import.meta.env.VITE_REACT_APP_API_URL
 
 const Login = () => {
   const { user } = useSelector((state) => state.auth)
@@ -22,11 +23,11 @@ const Login = () => {
   }
 
   const handleLoginGoogle = () => {
-    window.open('http://localhost:5000/api/v1/auth/google', '_self')
+    window.open(`${VITE_REACT_APP_API_URL}/auth/google`, '_self')
     function getUser() {
       axios({
         method: 'GET',
-        url: 'http://localhost:5000/api/v1/auth/profile',
+        url: `${VITE_REACT_APP_API_URL}/auth/profile`,
       })
     }
     getUser()
@@ -42,7 +43,7 @@ const Login = () => {
     }
     await axios({
       method: 'POST',
-      url: 'http://localhost:5000/api/v1/auth/login',
+      url: '${VITE_REACT_APP_API_URL}/auth/login',
       data: { ...account },
       withCredentials: true,
     })
