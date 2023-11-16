@@ -42,7 +42,7 @@ const Signup = () => {
     }
     await axios({
       method: 'POST',
-      url: '${VITE_REACT_APP_API_URL}/auth/signup',
+      url: `${VITE_REACT_APP_API_URL}/auth/signup`,
       data: { ...account },
       withCredentials: true,
     })
