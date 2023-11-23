@@ -11,7 +11,6 @@ export default function RequestApi({
   const headers = {
     Accept: 'application/json',
     'Content-Type': type ? type : 'application/json',
-    'Accept-Control-Allow-Origin': '*',
   }
 
   const instance = axios.create({ headers })
@@ -82,6 +81,5 @@ export default function RequestApi({
     url: `${VITE_REACT_APP_API_URL}${endpoint}`,
     data: body,
     responseType: responseType,
-    withCredentials: true,
   })
 }
