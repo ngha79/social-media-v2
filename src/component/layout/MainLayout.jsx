@@ -99,153 +99,154 @@ const MainLayout = () => {
 
   useEffect(() => {
     if (user) {
-      socket.emit('login', user?._id)
-      socketNotification.emit('connection', user?._id)
-      dispatch(getAllConversation({ userId: user?._id }))
-      dispatch(getUsersSuggest({ userId: user?._id, page: 1, limit: 20 }))
-      dispatch(
-        getAllFriendsRequestUser({ userId: user?._id, page: 1, limit: 20 })
-      )
-      dispatch(
-        getAllFriendsInvitedUser({ userId: user?._id, page: 1, limit: 20 })
-      )
-      dispatch(getAllFriends({ userId: user?._id, page: 1, limit: 20 }))
-      dispatch(
-        getListNotification({
-          userId: user?._id,
-          page: 1,
-          limit: 30,
-        })
-      )
-      dispatch(
-        getConversationFriend({
-          userId: user?._id,
-          type: 'single',
-        })
-      )
-      dispatch(
-        getConversationGroup({
-          userId: user?._id,
-          type: 'group',
-        })
-      )
-      dispatch(
-        getAllPost({
-          userId: user?._id,
-          page: 1,
-          limit: 20,
-        })
-      )
-
       if (!user?.name) {
         navigate('/update/user')
+      } else {
+        socket.emit('login', user?._id)
+        socketNotification.emit('connection', user?._id)
+        dispatch(getAllConversation({ userId: user?._id }))
+        dispatch(getUsersSuggest({ userId: user?._id, page: 1, limit: 20 }))
+        dispatch(
+          getAllFriendsRequestUser({ userId: user?._id, page: 1, limit: 20 })
+        )
+        dispatch(
+          getAllFriendsInvitedUser({ userId: user?._id, page: 1, limit: 20 })
+        )
+        dispatch(getAllFriends({ userId: user?._id, page: 1, limit: 20 }))
+        dispatch(
+          getListNotification({
+            userId: user?._id,
+            page: 1,
+            limit: 30,
+          })
+        )
+        dispatch(
+          getConversationFriend({
+            userId: user?._id,
+            type: 'single',
+          })
+        )
+        dispatch(
+          getConversationGroup({
+            userId: user?._id,
+            type: 'group',
+          })
+        )
+        dispatch(
+          getAllPost({
+            userId: user?._id,
+            page: 1,
+            limit: 20,
+          })
+        )
+
+        socket.emit('User Online Join Rooms', user?._id)
+
+        socket.on('request-friend', (userId) => {
+          dispatch(addFriendSocket(userId))
+          audio.play()
+        })
+        socket.on('unfriend', (userId) => {
+          dispatch(unfriendUserSocket(userId))
+        })
+        socket.on('cancel-invited-friend', (userId) => {
+          dispatch(cancelAddFriendSocket(userId))
+        })
+        socket.on('refuse-invited-friend', (userId) => {
+          dispatch(refuseFriendSocket(userId))
+          audio.play()
+        })
+        socket.on('accept-invited-friend', (userId) => {
+          dispatch(acceptFriendSocket(userId))
+          audio.play()
+        })
+        socket.on('createNewMessage', ({ newMessage, conversation }) => {
+          dispatch(onCreateNewMessage({ newMessage, conversation }))
+          if (newMessage.userSendId._id !== user._id) audio.play()
+        })
+        socket.on('deleteMessage', (result) => {
+          dispatch(onDeleteMessage(result))
+          if (result.userSendId._id !== user._id) audio.play()
+        })
+        socket.on('addReactMessage', (result) => {
+          dispatch(onReactMessage(result))
+          audio.play()
+          if (result.userSendId._id !== user._id) audio.play()
+        })
+        socket.on('create new conversation', (result) => {
+          dispatch(onCreateConversation(result))
+          audio.play()
+        })
+        socket.on('toAddUserToConversation', (result, userIds) => {
+          if (!userIds.includes(user?._id)) {
+            dispatch(toAddUserToConversation(result))
+          }
+        })
+        socket.on('onAddUserToConversation', (result) => {
+          dispatch(onAddUserToConversation(result))
+          socket.emit('join room', result)
+          audio.play()
+        })
+        socket.on('kickMemberConversation', (result, userId) => {
+          if (userId !== user?._id) {
+            dispatch(toConversationKickMember(result))
+          }
+          audio.play()
+        })
+        socket.on('toMemberKickConversation', (result) => {
+          dispatch(toUserKickFromConversation(result))
+        })
+        socket.on('leaveConversation', (result) => {
+          dispatch(toConversationMemberLeave(result))
+          audio.play()
+        })
+        socket.on('disbandConversation', (result) => {
+          dispatch(toConversationDisband(result))
+          audio.play()
+        })
+        socket.on('updateConversation', (result) => {
+          dispatch(toConversationUpdate(result))
+          audio.play()
+        })
+        socket.on('createNewComment', (comment) => {
+          if (user?._id !== comment.comment_userId._id) {
+            dispatch(onCreateNewComment(comment))
+          }
+        })
+        socket.on('updateComment', (comment) => {
+          if (user?._id !== comment.comment_userId._id) {
+            dispatch(onUpdateComment(comment))
+          }
+        })
+        socket.on('deleteComment', (comment) => {
+          if (user?._id !== comment.comment_userId._id) {
+            dispatch(onDeleteComment(comment))
+          }
+        })
+        socketNotification.on('notification', (notification) => {
+          dispatch(pushNotification(notification))
+          audio.play()
+        })
+
+        socket.on('receiver video call', handleReceiverVideoCall)
+        socket.on('cancel video call to room', () => {
+          setIsCallVideo(false)
+        })
+        socket.on('refuse video call to room', () => {
+          dispatch(cancelCallVideo())
+        })
+        socket.on('accept video call to room', onAcceptVideoCall)
+        socket.on('New Conversation', (conversation) => {
+          dispatch(newConversation(conversation))
+          socket.emit('join room', conversation)
+        })
+        socket.on('Join New Conversation', (conversation) => {
+          socket.emit('join room', conversation)
+        })
+        setTimeout(() => {
+          setIsLoading(false)
+        }, [500])
       }
-      socket.emit('User Online Join Rooms', user?._id)
-
-      socket.on('request-friend', (userId) => {
-        dispatch(addFriendSocket(userId))
-        audio.play()
-      })
-      socket.on('unfriend', (userId) => {
-        dispatch(unfriendUserSocket(userId))
-      })
-      socket.on('cancel-invited-friend', (userId) => {
-        dispatch(cancelAddFriendSocket(userId))
-      })
-      socket.on('refuse-invited-friend', (userId) => {
-        dispatch(refuseFriendSocket(userId))
-        audio.play()
-      })
-      socket.on('accept-invited-friend', (userId) => {
-        dispatch(acceptFriendSocket(userId))
-        audio.play()
-      })
-      socket.on('createNewMessage', ({ newMessage, conversation }) => {
-        dispatch(onCreateNewMessage({ newMessage, conversation }))
-        if (newMessage.userSendId._id !== user._id) audio.play()
-      })
-      socket.on('deleteMessage', (result) => {
-        dispatch(onDeleteMessage(result))
-        if (result.userSendId._id !== user._id) audio.play()
-      })
-      socket.on('addReactMessage', (result) => {
-        dispatch(onReactMessage(result))
-        audio.play()
-        if (result.userSendId._id !== user._id) audio.play()
-      })
-      socket.on('create new conversation', (result) => {
-        dispatch(onCreateConversation(result))
-        audio.play()
-      })
-      socket.on('toAddUserToConversation', (result, userIds) => {
-        if (!userIds.includes(user?._id)) {
-          dispatch(toAddUserToConversation(result))
-        }
-      })
-      socket.on('onAddUserToConversation', (result) => {
-        dispatch(onAddUserToConversation(result))
-        socket.emit('join room', result)
-        audio.play()
-      })
-      socket.on('kickMemberConversation', (result, userId) => {
-        if (userId !== user?._id) {
-          dispatch(toConversationKickMember(result))
-        }
-        audio.play()
-      })
-      socket.on('toMemberKickConversation', (result) => {
-        dispatch(toUserKickFromConversation(result))
-      })
-      socket.on('leaveConversation', (result) => {
-        dispatch(toConversationMemberLeave(result))
-        audio.play()
-      })
-      socket.on('disbandConversation', (result) => {
-        dispatch(toConversationDisband(result))
-        audio.play()
-      })
-      socket.on('updateConversation', (result) => {
-        dispatch(toConversationUpdate(result))
-        audio.play()
-      })
-      socket.on('createNewComment', (comment) => {
-        if (user?._id !== comment.comment_userId._id) {
-          dispatch(onCreateNewComment(comment))
-        }
-      })
-      socket.on('updateComment', (comment) => {
-        if (user?._id !== comment.comment_userId._id) {
-          dispatch(onUpdateComment(comment))
-        }
-      })
-      socket.on('deleteComment', (comment) => {
-        if (user?._id !== comment.comment_userId._id) {
-          dispatch(onDeleteComment(comment))
-        }
-      })
-      socketNotification.on('notification', (notification) => {
-        dispatch(pushNotification(notification))
-        audio.play()
-      })
-
-      socket.on('receiver video call', handleReceiverVideoCall)
-      socket.on('cancel video call to room', () => {
-        setIsCallVideo(false)
-      })
-      socket.on('refuse video call to room', () => {
-        dispatch(cancelCallVideo())
-      })
-      socket.on('accept video call to room', onAcceptVideoCall)
-      socket.on('New Conversation', (conversation) => {
-        dispatch(newConversation(conversation))
-        socket.emit('join room', conversation)
-      })
-      socket.on('Join New Conversation', (conversation) => {
-        socket.emit('join room', conversation)
-      })
-      setTimeout(() => {
-        setIsLoading(false)
-      }, [500])
     } else {
       navigate('/login')
     }
